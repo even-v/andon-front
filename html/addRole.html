@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.min.css">
+  <script src="../js/jquery/jquery-3.0.0.min.js"></script>
+  <script src="../lib/bootstrap/js/bootstrap-table.js"></script>
+  <script src="../lib/bootstrap/js/bootstrap.min.js"></script>
+  <script src="../js/url.js"></script>
+</head>
+
+<body>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">资源管理</div>
+    <div class="panel-body">
+
+
+      角色名：<input type="search" name="name" id="name" class="form-control" value="" required="required" title="">
+      描述：<input type="search" name="description" id="description" class="form-control" value="" required="required"
+        title="">
+
+      <br>
+      <button type="button" id="queryRole" class="btn btn-success">查询资源列表</button>
+      <button type="button" style="width:70px;height:35px;margin-left:20px;margin-top:-3px" id="btn_add"
+        class="btn btn-info">添加</button>
+      <button type="button" style="width:70px;height:35px;margin-left:20px;margin-top:-3px" id="btn_edit"
+        class="btn btn-warning">编辑</button>
+      <button type="button" style="width:70px;height:35px;margin-left:20px;margin-top:-3px" id="btn_delete"
+        class="btn btn-danger">删除</button>
+    </div>
+
+  </div>
+
+  <table class="table table-bordered" id="roleList">
+  </table>
+
+  <script>
+    $(document).ready(function () {
+      console.log("addEvent");
+      initTable();
+      $("#queryRole").click(query);
+
+    });
+
+    var query = function () {
+      console.log("query clicked");
+      initTable();
+    }
+
+    function initTable() {
+      console.log(" init table ");
+      //先销毁表格
+      $('#roleList').bootstrapTable('destroy');
+      //初始化表格,动态从服务器加载数据
+      $('#roleList').bootstrapTable({
+        method: "post", //使用get请求到服务器获取数据
+        contentType: 'application/json',
+        url: basePath + 'sys/resource/list', //获取数据的地址
+        toolbar: '#toolbar',
+        striped: true, //行间隔色
+        clickToSelect: true, //点击选中行
+        pagination: true, //启动分页
+        pageSize: 10, //每页显示的记录数
+        pageNumber: 1, //当前第几页
+        pageList: [1, 5, 10, 15, 20, 25], //记录数可选列表
+        showColumns: true, //显示下拉框勾选要显示的列
+        showRefresh: true, //显示刷新按钮
+        hideLoading: true,
+        showHeader: true,
+        silent: true,
+        showToggle: true, //是否显示详细视图和列表视图的切换按钮
+        sidePagination: "server", //表示服务端分页
+        queryParamsType: "",
+
+        detailView: false, //父子表
+        uniqueId: "uuid",
+        columns: [{
+            checkbox: true
+          },{
+            field:'uuid',
+            title:'uuid',
+            align:'center',
+            width:'350'
+          },
+          {
+            field: 'name',
+            title: '资源名称',
+            align: 'center'
+          }, {
+            field: 'type',
+            title: '资源类型',
+            align: 'center'
+          }, {
+            field: 'permission',
+            title: '权限',
+            align: 'center'
+          }
+        ],
+        totalField: "total",
+        dataField: "records",
+        queryParams: function getParams(params) { //设置查询参数
+          var param = {
+            current: params.pageNumber,
+            size: params.limit,
+            // 这里可以放多个参数，controller中都能接收
+          };
+          return param;
+        },
+        onLoadSuccess: function (data) { //加载成功时执行 
+        },
+        onLoadError: function () { //加载失败时执行
+        }
+      });
+    }
+
+
+    //编辑？
+    $("#btn_edit").click(function () {
+      // 获取当前行
+      var row = $("#roleList").bootstrapTable('getSelections');
+      alert(row);
+      alert(row[0].name);
+    });
+
+
+    //增加角色
+    $("#btn_add").click(function () {
+      var name = $("#name").val();
+      var description = $("#description").val();
+      var roleResourceList = [];
+      var row = $("#roleList").bootstrapTable('getSelections');
+      for (var i = 0; i < row.length; i++) {
+        var roleResource = {
+          "resourceId": row[i].uuid
+        };
+        roleResourceList.push(roleResource);
+      }
+
+      var queryParam={"name":name,"description":description,"roleResourceList":roleResourceList};
+      console.log("param"+queryParam);
+
+      $.ajax({
+        url: basePath+'sys/role/save',
+        method: "post", //使用get请求到服务器获取数据
+        contentType: 'application/json',
+        data:  JSON.stringify(queryParam),
+        success: function (data) {
+          if(!data.success){
+            alert("添加失败"+data.msg?data.msg:'');
+          }else{
+            alert("添加成功");
+          }
+        
+        },
+        error: function (data) {
+          alert("添加失败"+data.msg?data.msg:'');
+        }
+      })
+    });
+  </script>
+
+  </script>
+
+</body>
+
+</html>

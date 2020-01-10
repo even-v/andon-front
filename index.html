@@ -1,0 +1,49 @@
+<html>
+    <head>
+
+        <script src="/js/jquery/jquery-3.0.0.min.js"></script>
+        <script src="/js/url.js"></script>
+
+    </head>
+
+    <body>
+       first page
+       <br>
+        <div id="userList">
+
+
+        </div>
+       
+       <ul class="list-group">
+           <li class="list-group-item">Item 1</li>
+           <li class="list-group-item">Item 2</li>
+           <li class="list-group-item">Item 3</li>
+       </ul>
+       
+       <ul class="pager">
+           <li><a href="#">Previous</a></li>
+           <li><a href="#">Next</a></li>
+       </ul>
+       
+       <input type="button" value="submit" id="wms">
+
+       <script type="text/javascript">
+        $(document).ready(function(){
+            $("#wms").click(function(){
+                $.ajax({
+                    url:basePath+"user/listAll",
+                    method:"GET",
+                    success:function(resp){
+                        $("#userList").html(resp);
+                    }
+                });
+
+            });
+
+        });
+       
+       </script>
+    </body>
+
+
+</html>
