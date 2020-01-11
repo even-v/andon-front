@@ -21,7 +21,7 @@
 
 <button type="button"  id="queryRole" class="btn btn-default">查询角色列表</button>
 
-<table class="table table-hover" id="roleList">
+<table class="table table-bordered" id="roleList">
 </table>
 
 <script>
@@ -49,18 +49,26 @@ function initTable(){
         contentType:'application/json',
         url: basePath +'sys/role/list', //获取数据的地址
         toolbar: '#toolbar',
+        striped: true, //行间隔色
+        clickToSelect: true, //点击选中行
         pagination: true, //启动分页
-        pageSize: 10,  //每页显示的记录数
+        pageSize: 10, //每页显示的记录数
         pageNumber: 1, //当前第几页
-        pageList: [1, 5, 10, 15, 20, 25],  //记录数可选列表
-        showColumns: true,  //显示下拉框勾选要显示的列
-        showRefresh: true,  //显示刷新按钮
+        pageList: [1, 5, 10, 15, 20, 25], //记录数可选列表
+        showColumns: true, //显示下拉框勾选要显示的列
+        showRefresh: true, //显示刷新按钮
         hideLoading: true,
+        showHeader: true,
+        silent: true,
+        showToggle: true, //是否显示详细视图和列表视图的切换按钮
         sidePagination: "server", //表示服务端分页
-        queryParamsType: "undefined",
-        detailView: false,//父子表
-        uniqueId: "id",
-        columns: [
+        queryParamsType: "",
+
+        detailView: false, //父子表
+        uniqueId: "uuid",
+        columns: [{
+            checkbox: true
+          },
             {
                 field: 'name',
                 title: '角色名称',
@@ -75,13 +83,15 @@ function initTable(){
               align:'center'
             }
         ],
-        queryParams: function queryParams(params) {   //设置查询参数
-            var param = {
-                current: 1,
-                size: 10
-               // 这里可以放多个参数，controller中都能接收
-            };
-            return param;
+        totalField: "total",
+        dataField: "records",
+        queryParams: function getParams(params) { //设置查询参数
+          var param = {
+            current: params.pageNumber,
+            size: params.limit,
+            // 这里可以放多个参数，controller中都能接收
+          };
+          return param;
         },
         onLoadSuccess: function () {  //加载成功时执行 
         },

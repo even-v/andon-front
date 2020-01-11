@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../lib/bootstrap/css/bootstrap.min.css">
+
+    <script src="../../js/jquery/jquery-3.0.0.min.js"></script>
+    <script src="../../lib/bootstrap/js/bootstrap-table.js"></script>
+    <script src="../../lib/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../js/url.js"></script>
+</head>
+
+<body>
+
+
+    <div class="panel panel-default">
+
+        <div class="panel panel-default">
+            <div class="panel-heading" style="text-align: center;height: 70px;">
+                <h3>新增用户</h3>
+            </div>
+            <div class="panel-body">
+
+                <form id="userInputForm" method="POST" role="form" style="text-align: center;">
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">用户名</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"> <i class="glyphicon glyphicon-pencil fa-lg"></i></span>
+                            <input type="text" class="col-sm-2 form-control" name="username" placeholder="请输入用户名">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">姓名</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"> <i class="glyphicon glyphicon-pencil fa-lg"></i></span>
+                            <input type="text" class="col-sm-2 form-control" name="name" placeholder="请输入姓名">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">密码</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"> <i class="glyphicon glyphicon-pencil fa-lg"></i></span>
+                            <input type="text" class="col-sm-2 form-control" name="password" placeholder="请输入密码">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">职位</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"> <i class="glyphicon glyphicon-pencil fa-lg"></i></span>
+                            <input type="text" class="col-sm-2 form-control" name="job" placeholder="请输入职位">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">邮箱</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"> <i class="glyphicon glyphicon-pencil fa-lg"></i></span>
+                            <input type="text" class="col-sm-2 form-control" name="email" placeholder="请输入邮箱">
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">手机号码</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"> <i class="glyphicon glyphicon-pencil fa-lg"></i></span>
+                            <input type="text" class="col-sm-2 form-control" name="mobile" placeholder="请输入手机号码">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">微信号</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"> <i class="glyphicon glyphicon-pencil fa-lg"></i></span>
+                            <input type="text" class="col-sm-2 form-control" name="wechatCode" placeholder="请输入微信号">
+                        </div>
+                    </div>
+
+                    <br><br>
+                    <button type="button" id="userInputAdd" class="btn btn-primary">Submit</button>
+                    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                    <button type="reset" class="btn btn-danger">reset</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $("#userInputAdd").click(function () {
+            var data = $("#userInputForm").serializeObject();
+            console.log(JSON.stringify(data));
+            console.log("data==" + data);
+            $.ajax({
+                url: basePath + 'sys/user/save',
+                method: "post",
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                success: function (data) {
+                    if (!data.success) {
+                        alert("添加失败" + data.msg ? data.msg : '');
+                    } else {
+                        alert("添加成功");
+                    }
+                },
+                error: function (data) {
+                    alert("添加失败" + data.msg ? data.msg : '');
+                }
+            })
+        });
+
+
+        /**
+  * 功能：序列化form表单数据成Json对象
+  * 1.name均是简单的一级对象
+  * 2.同名的name属性，值会被序列化为数组，例如checkbox等控件
+  */
+        $.fn.serializeObject = function () {
+            var json = {};
+            var arrObj = this.serializeArray();
+            $.each(arrObj, function () {
+                if (json[this.name]) {
+                    if (!json[this.name].push) {
+                        json[this.name] = [json[this.name]];
+                    }
+                    json[this.name].push(this.value || '');
+                } else {
+                    json[this.name] = this.value || '';
+                }
+            });
+            return json;
+        };
+    </script>
+</body>
+
+</html>
